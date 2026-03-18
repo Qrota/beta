@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Acalanto Bebê | Registro de Atendimento</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f3a8a8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Acalanto">
+<link rel="apple-touch-icon" href="imagens/logo_acalantobebe1.png">
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    background: linear-gradient(rgba(245, 219, 201, 0.6), rgba(238, 212, 204, 0.6)), url("imagens/fundo08.png");
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    width: 100%;
+    max-width: 620px;
+    background: rgba(255, 255, 255, 0.753);
+
+    backdrop-filter: blur(12px);
+    border: 1px solid rgb(188, 243, 252);
+
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+
+    position: relative;
+    overflow: hidden;
+}
+.container::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: url("imagens/mae_bebe_contorno3.png");
+    background-size: cover;
+    background-position: center;
+
+    opacity: 0.08;   /* controla apenas a imagem */
+
+    z-index: 0;
+}
+.container * {
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 50px;
+}
+.logo h1 {
+    font-weight: 300;
+    margin: 0;
+    color: #f3a8a8;
+    font-size: 36px;
+}
+.logo span {
+    font-size: 15px;
+    color: #999;
+    display: block;
+}
+
+/* === CAMPOS === */
+.select-wrapper {
+    position: relative;
+    margin-top: 22px;
+}
+.select-wrapper label {
+    display: block;
+    font-size: 13px;
+    color: #525050;
+    margin-bottom: 6px;
+    font-weight: 400;
+}
+
+select, input {
+    width: 100%;
+    padding: 12px 18px;
+    border: 1px solid #e2c2c2;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    font-size: 16px;
+    color: #888; /* Ajustado para melhor leitura */
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23e2c2c2' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    cursor: pointer;
+}
+select:focus, input:focus {
+    outline: none;
+    border-color: #e8a4af;
+    box-shadow: 0 0 0 4px rgba(232, 164, 175, 0.2);
+}
+
+/* === BOTÕES === */
+button {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+button:active { transform: scale(0.96); }
+
+.entrada {
+    padding: 10px;
+    background: linear-gradient(135deg, #ffb5c1, #ff8a9a);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+    color: white;
+}
+.saida {
+    padding: 10px;
+    background: linear-gradient(135deg, #ffc4bc, #ff9d91);
+    backdrop-filter: blur(11px);
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* === STATUS === */
+#status {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 15px;
+    min-height: 28px;
+    font-weight: 500;
+}
+.loading { color: #888; }
+.sucesso { color: #2e9b52; }
+.erro { color: #d64545; }
+
+/* === INFO E FOOTER === */
+.info {
+    margin-top: 22px;
+    font-size: 13.5px;
+    text-align: center;
+    color: #888;
+    line-height: 1.4;
+}
+
+.footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #999;
+}
+.footer-logo {
+    display: block;
+    margin: 18px auto 0;
+    width: 32px;
+    height: 24px;
+    background: url('imagens/logo_acalantobebe1.png') center/contain no-repeat;
+    opacity: 0.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <h1>Acalanto Bebê</h1>
+        <span>Registro de Atendimento</span>
+    </div>
+
+    <div class="select-wrapper">
+        <label>Nome da Profissional Parceira</label>
+        <select id="nome">
+            <option value="">— Selecione seu Nome —</option>
+            <option value="Auricelia">Auricelia Gomes</option>
+            <option value="Jociane">Jociane Batista</option>
+            <option value="Sonia">Sonia Felix </option>
+            <option value="Grazielle">Grazielle Pereira</option>
+            <option value="Nathani">Nathani Reis </option>
+        </select>
+    </div>
+
+    <div class="select-wrapper">
+        <label>Selecione o atendimento</label>
+        <select id="cargo">
+            <option value="">— Escolha o atendimento —</option>
+            <option value="(Livia)-(Gabriel)">Mãe (Livia) - Bebê (Gabriel)</option>
+            <option value="(Mariah)-(Gêmeos)">Mãe (Mariah) - Bebês (Gêmeos)</option>
+            <option value="(Mariana)-(Antônio)">Mãe (Mariana) - Bebê (Antônio)</option>
+        </select>
+    </div>
+
+    <button id="btnInicio" class="entrada" onclick="iniciarServico()">
+        Iniciar Atendimento
+    </button>
+
+    <button id="btnFim" class="saida" onclick="finalizarServico()">
+        Finalizar Atendimento
+    </button>
+
+    <div id="status"></div>
+
+    <div class="info">
+        Registro automático com data, hora e localização GPS
+    </div>
+
+    <div class="footer">
+        Sistema interno • Acalanto Bebê
+        <div class="footer-logo"></div>
+    </div>
+</div>
+<script>
+
+const API = "https://script.google.com/macros/s/AKfycbxwrmfMm0f5i1mtdNKOs2kCJDZwGmtQdSGuEJw1iFvvmsRqdtM-blJ1QWCHJMHn3w/exec";
+
+let enviando = false;
+
+/* VALOR POR HORA – ajustado para R$ 25,00 */
+const VALOR_HORA = 25;
+
+/* =============================== */
+/* FUNÇÕES DE TEMPO */
+/* =============================== */
+
+function agoraISO(){
+    return new Date().toISOString();
+}
+
+function formatarData(data){
+    return new Date(data).toLocaleString("pt-BR");
+}
+
+function calcularHoras(inicio, fim){
+    const diff = new Date(fim) - new Date(inicio);
+    const horas = diff / 3600000;
+    return horas.toFixed(2);
+}
+
+/* =============================== */
+/* CONTROLE DO ATENDIMENTO */
+/* =============================== */
+
+function atendimentoAtivo(){
+    return localStorage.getItem("acalanto_inicio");
+}
+
+function salvarInicio(data){
+    localStorage.setItem("acalanto_inicio", data);
+}
+
+function limparInicio(){
+    localStorage.removeItem("acalanto_inicio");
+}
+
+/* =============================== */
+/* TEMPORIZADOR */
+/* =============================== */
+
+let timer;
+
+function iniciarTimer(){
+    const inicio = atendimentoAtivo();
+    if(!inicio) return;
+
+    timer = setInterval(() => {
+        const diff = new Date() - new Date(inicio);
+        const horas = Math.floor(diff / 3600000);
+        const minutos = Math.floor((diff % 3600000) / 60000);
+
+        document.getElementById("status").innerHTML =
+            "⏱ Atendimento em andamento<br>" +
+            horas + "h " + minutos + "min";
+    }, 1000);
+}
+
+/* =============================== */
+/* GEOLOCALIZAÇÃO */
+/* =============================== */
+
+function obterGPS(){
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+            pos => { resolve(pos.coords); },
+            err => { reject(err); },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    });
+
+}
+// Registra o Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker registrado!'))
+        .catch(err => console.log('Erro ao registrar SW', err));
+    });
+  }
+/* =============================== */
+/* REGISTRO */
+/* =============================== */
+
+async function registrar(tipo){
+    if(enviando) return;
+
+    const nome = document.getElementById("nome").value;
+    const atendimento = document.getElementById("cargo").value;
+
+    if(!nome){
+        alert("Selecione seu nome");
+        return;
+    }
+
+    if(!atendimento){
+        alert("Selecione o atendimento");
+        return;
+    }
+
+    const statusEl = document.getElementById("status");
+    statusEl.className = "loading";
+    statusEl.innerHTML = "Obtendo localização GPS...";
+
+    let coords;
+    try {
+        coords = await obterGPS();
+    } catch {
+        statusEl.className = "erro";
+        statusEl.innerHTML = "⚠ Ative o GPS para registrar";
+        return;
+    }
+
+    const agora = agoraISO();
+    let inicio = atendimentoAtivo();
+    let horas = "";
+    let valor = "";
+    let fim = "";
+
+    if(tipo === "Início"){
+        salvarInicio(agora);
+        inicio = agora;
+        document.getElementById("btnInicio").disabled = true;
+    }
+
+    if(tipo === "Fim"){
+        if(!inicio){
+            alert("Nenhum atendimento iniciado");
+            return;
+        }
+        fim = agora;
+        // Converte para número antes de calcular o valor
+        horas = parseFloat(calcularHoras(inicio, fim));
+        valor = (horas * VALOR_HORA).toFixed(2);
+        limparInicio();
+        document.getElementById("btnInicio").disabled = false;
+    }
+
+    enviarRegistro({
+        id: crypto.randomUUID(),
+        nome: nome,
+        atendimento: atendimento,
+        tipo: tipo,
+        inicio: inicio,
+        fim: fim,
+        horas: horas.toString(),
+        valor: valor,
+        lat: coords.latitude,
+        lon: coords.longitude,
+        data: agora
+    });
+}
+
+/* =============================== */
+/* ENVIO PARA API */
+/* =============================== */
+
+function enviarRegistro(dados){
+    enviando = true;
+    const status = document.getElementById("status");
+    status.className = "loading";
+    status.innerHTML = "Salvando registro...";
+
+    fetch(API, {
+        method: "POST",
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.text())
+    .then(() => {
+        if(dados.tipo === "Início"){
+            status.className = "sucesso";
+            status.innerHTML = "✔ Atendimento iniciado com sucesso";
+            iniciarTimer();
+        } else {
+            status.className = "sucesso";
+            status.innerHTML =
+                "✔ Atendimento finalizado<br>" +
+                "⏱ " + dados.horas + " horas<br>" +
+                "💰 R$ " + dados.valor;
+            clearInterval(timer);
+        }
+        enviando = false;
+    })
+    .catch(() => {
+        status.className = "erro";
+        status.innerHTML = "Erro ao salvar registro";
+        enviando = false;
+    });
+}
+
+/* =============================== */
+/* BOTÕES */
+/* =============================== */
+
+function iniciarServico(){
+    if(confirm("Desejamos um excelente atendimento! Confirma o início do serviço agora?")){
+        registrar("Início");
+    }
+}
+
+function finalizarServico(){
+    if(confirm("Parabéns por mais um atendimento realizado com sucesso! Confirma a finalização do serviço agora?")){
+        registrar("Fim");
+    }
+}
+
+/* =============================== */
+/* RESTAURAR ESTADO */
+/* =============================== */
+
+window.onload = function(){
+    if(atendimentoAtivo()){
+        document.getElementById("btnInicio").disabled = true;
+        iniciarTimer();
+    }
+};
+
+/* =============================== */
+/* FULLSCREEN */
+/* =============================== */
+
+function isIOS(){
+    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
+function entrarFullscreen(){
+    if(isIOS()) return;
+    const el = document.documentElement;
+    if(el.requestFullscreen){
+        el.requestFullscreen();
+    }
+}
+
+document.body.addEventListener("click", entrarFullscreen, { once: true });
+
+</script>
