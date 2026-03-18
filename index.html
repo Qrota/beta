@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Acalanto Bebê | Registro de Atendimento</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--rosa:#f3a8a8;
+--rosa2:#ff6fb7;
+--azul:#5ce1e6;
+--texto:#6b7280;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Lato',sans-serif;
+
+height:100vh;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:linear-gradient(rgba(245, 219, 201, 0.6), rgba(238, 212, 204, 0.6)), url("imagens/fundo08.png");
+
+background-size:cover;
+overflow:hidden;
+
+}
+
+/* container */
+
+.splash{
+
+text-align:center;
+z-index:10;
+
+animation:fadeIn 1.2s ease;
+
+}
+
+/* logo */
+
+.logo{
+
+width:130px;
+
+animation:
+logoFloat 3s ease-in-out infinite,
+logoAppear 1.2s ease;
+
+filter:drop-shadow(0 15px 20px rgba(255,111,183,0.35));
+
+margin-bottom:15px;
+
+}
+
+/* titulo */
+
+.title{
+
+font-size:34px;
+font-weight:300;
+
+color:var(--rosa);
+
+margin-bottom:5px;
+
+letter-spacing:1px;
+
+animation:titleReveal 1.5s ease;
+
+}
+
+/* subtitulo */
+
+.subtitle{
+
+font-size:16px;
+color:var(--texto);
+
+margin-bottom:40px;
+
+opacity:0;
+
+animation:fadeText 2s 1s forwards;
+
+}
+
+/* loading text */
+
+.loading{
+
+font-size:14px;
+
+color:#888;
+
+margin-bottom:10px;
+
+}
+
+/* progress */
+
+.progress{
+
+width:220px;
+height:6px;
+
+background:#eee;
+
+border-radius:20px;
+
+margin:auto;
+
+overflow:hidden;
+
+}
+
+.bar{
+
+height:100%;
+
+width: 1px;;
+
+background:#a1a1a1;
+
+animation:loading 4.5s forwards;
+
+border-radius:20px;
+
+}
+
+/* partículas */
+
+.particle{
+
+position:absolute;
+
+font-size:20px;
+
+opacity:.6;
+
+animation:floatUp linear infinite;
+
+pointer-events:none;
+
+}
+
+/* animações */
+
+@keyframes logoFloat{
+
+0%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+100%{transform:translateY(0)}
+
+}
+
+@keyframes logoAppear{
+
+from{
+opacity:0;
+transform:scale(.5)
+}
+
+to{
+opacity:1;
+transform:scale(1)
+}
+
+}
+
+@keyframes titleReveal{
+
+from{
+opacity:0;
+transform:translateY(20px)
+}
+
+to{
+opacity:1;
+transform:translateY(0)
+}
+
+}
+
+@keyframes fadeText{
+
+to{opacity:1}
+
+}
+
+@keyframes fadeIn{
+
+from{opacity:0}
+to{opacity:1}
+
+}
+
+@keyframes loading{
+
+to{width:100%}
+
+}
+
+@keyframes floatUp{
+
+0%{
+transform:translateY(110vh) rotate(0deg);
+opacity:0;
+}
+
+20%{
+opacity:.9;
+}
+
+100%{
+
+transform:translateY(-100px) rotate(360deg);
+opacity:0;
+
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="splash">
+
+<img src="imagens/logo_acalantobebe1.png" class="logo">
+
+<div class="title">Acalanto Bebê</div>
+
+<div class="subtitle">
+Registro de Atendimento
+</div>
+
+<div class="loading">
+Preparando atendimento...
+</div>
+
+<div class="progress">
+<div class="bar"></div>
+</div>
+
+</div>
+
+<script>
+
+const icons = ["💗","✨","💞","🍼","🌸"];
+
+function createParticle(){
+
+const el = document.createElement("div");
+
+el.className="particle";
+
+el.innerText=icons[Math.floor(Math.random()*icons.length)];
+
+el.style.left=Math.random()*100+"vw";
+
+el.style.fontSize=(Math.random()*18+16)+"px";
+
+el.style.animationDuration=(Math.random()*5+4)+"s";
+
+document.body.appendChild(el);
+
+setTimeout(()=>{
+
+el.remove();
+
+},9000);
+
+}
+
+setInterval(createParticle,350);
+
+
+/* redirecionamento */
+
+setTimeout(()=>{
+
+window.location.href="principal.html";
+
+},5000);
+
+</script>
+
+</body>
+</html>
