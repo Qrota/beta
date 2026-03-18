@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Painel Administrativo | Acalanto Bebê</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+    <style>
+        /* (mesmo estilo, sem alterações) */
+        :root {
+            --primary: #fcbba8;
+            --primary-light: #fff5f2;
+            --text-dark: #4a4a4a;
+            --text-muted: #8e8e8e;
+            --bg-body: #fdfaf8;
+            --white: #ffffff;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            margin: 0;
+            background: linear-gradient(rgba(252, 217, 217, 0.6), #a0dcff79);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.3rem; }
+        .logo-img { width: 35px; height: 35px; background: var(--primary); border-radius: 10px; }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* Filtros */
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Estilização do Input Date para parecer PT-BR */
+        input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-dark);
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .btn-filter:hover { opacity: 0.8; transform: translateY(-1px); }
+
+        /* Cards de KPI */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .card h3 { margin: 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+        .card span { font-size: 1.8rem; font-weight: 700; display: block; }
+
+        /* Seções */
+        section {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        h2 { font-size: 1.1rem; display: flex; align-items: center; gap: 10px; margin-top: 0; }
+        h2::before { content: ''; width: 4px; height: 18px; background: var(--primary); border-radius: 4px; }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.3);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .rank-pos {
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 12px; color: white; font-weight: 800; font-size: 0.8rem;
+        }
+
+        #map { height: 350px; border-radius: 10px; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; color: var(--text-muted); font-size: 0.8rem; border-bottom: 2px solid var(--primary-light); }
+        td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.02); font-size: 0.9rem; }
+        .badge-valor { background: var(--primary-light); color: #d17a61; padding: 4px 10px; border-radius: 6px; font-weight: 700; }
+
+        @media (max-width: 768px) { .grid-main { grid-template-columns: 1fr !important; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand"><div class="logo-img"></div> Acalanto Bebê</div>
+    <div style="font-size: 0.85rem; color: #666;">Painel  Administrativo v2.5</div>
+</header>
+
+<div class="container">
+    
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>De (Dia/Mês/Ano)</label>
+            <input type="date" id="dataInicio">
+        </div>
+        <div class="filter-group">
+            <label>Até (Dia/Mês/Ano)</label>
+            <input type="date" id="dataFim">
+        </div>
+        <button class="btn-filter" onclick="atualizarDados()">Filtrar Período</button>
+    </div>
+
+    <div class="cards">
+        <div class="card"><h3>Atendimentos</h3><span id="totalAtendimentos">0</span></div>
+        <div class="card"><h3>Horas Totais</h3><span id="totalHoras">0</span></div>
+        <div class="card"><h3>Valor Pago</h3><span id="totalValor">R$ 0,00</span></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 1.5rem;" class="grid-main">
+        <section>
+            <h2>Produtividade</h2>
+            <div style="height: 300px;"><canvas id="grafico"></canvas></div>
+        </section>
+
+        <section>
+            <h2>Ranking de Colaboradoras</h2>
+            <div id="rankingContainer"></div>
+        </section>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; margin-top: 1.5rem;" class="grid-main">
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin:0">Histórico Detalhado</h2>
+                <select id="filtroNome"><option value="">Todas</option></select>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr><th>Nome</th><th>Serviço</th><th>Horas</th><th>Valor</th></tr>
+                    </thead>
+                    <tbody id="tabelaHistorico"></tbody>
+                </table>
+            </div>
+        </section>
+        <section>
+            <h2>Localização</h2>
+            <div id="map"></div>
+        </section>
+    </div>
+</div>
+
+<script>
+    const API = "https://script.google.com/macros/s/AKfycbxwrmfMm0f5i1mtdNKOs2kCJDZwGmtQdSGuEJw1iFvvmsRqdtM-blJ1QWCHJMHn3w/exec";
+    
+    const coresPasteis = [
+        '#fcbba8', '#a8dadc', '#ffdfba', '#bde0fe', 
+        '#d4a373', '#ccd5ae', '#e9edc9', '#ffb7b2',
+        '#b2e2f2', '#f0cf85', '#d8e2dc', '#ffcad4'
+    ];
+
+    let meuGrafico = null;
+
+    // Converte data do formato YYYY-MM-DD (input) para DD/MM/YYYY (API)
+    function formatarDataParaAPI(dataIso) {
+        if (!dataIso) return "";
+        const [y, m, d] = dataIso.split('-');
+        return `${d}/${m}/${y}`;
+    }
+    function medalha(pos){
+    if(pos === 1) return "🥇";
+    if(pos === 2) return "🥈";
+    if(pos === 3) return "🥉";
+    return pos;
+}
+    
+        // Função auxiliar para construir URL com parâmetros
+    function buildURL(tipo, params = {}) {
+        const url = new URL(API);
+        url.searchParams.append('tipo', tipo);
+        Object.entries(params).forEach(([chave, valor]) => {
+            if (valor) url.searchParams.append(chave, valor);
+        });
+        return url.toString();
+    }
+
+    async function atualizarDados() {
+        const dataInicio = document.getElementById("dataInicio").value;
+        const dataFim = document.getElementById("dataFim").value;
+
+        // Converte para o formato esperado pela API
+        const inicioFormatado = formatarDataParaAPI(dataInicio);
+        const fimFormatado = formatarDataParaAPI(dataFim);
+
+        // 1. Dashboard
+        const urlDash = buildURL('dashboard', { inicio: inicioFormatado, fim: fimFormatado });
+        const resDash = await fetch(urlDash);
+        const d = await resDash.json();
+        document.getElementById("totalAtendimentos").innerText = d.atendimentos;
+        document.getElementById("totalHoras").innerText = d.horas + "h";
+        document.getElementById("totalValor").innerText = "R$ " + d.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+
+        // 2. Relatório e Ranking
+        const urlRel = buildURL('relatorio', { inicio: inicioFormatado, fim: fimFormatado });
+        const resRel = await fetch(urlRel);
+        const rel = await resRel.json();
+        const nomes = Object.keys(rel);
+
+        // Preencher select de nomes para o filtro do histórico
+        const selectNome = document.getElementById("filtroNome");
+        selectNome.innerHTML = '<option value="">Todas</option>';
+        nomes.sort().forEach(nome => {
+            const option = document.createElement('option');
+            option.value = nome;
+            option.textContent = nome;
+            selectNome.appendChild(option);
+        });
+
+        // Atualizar Gráfico
+        if (meuGrafico) meuGrafico.destroy();
+        meuGrafico = new Chart(document.getElementById("grafico"), {
+            type: 'bar',
+            data: {
+                labels: nomes,
+                datasets: [{
+                    data: nomes.map(n => rel[n].horas),
+                    backgroundColor: nomes.map((_, i) => coresPasteis[i % coresPasteis.length]),
+                    borderRadius: 8
+                }]
+            },
+            options: {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    animation: {
+        duration: 1500,
+        easing: 'easeOutQuart'
+    },
+
+    plugins: {
+        legend: { display: false }
+    },
+
+    scales:{
+        y:{
+            beginAtZero:true
+        }
+    }
+}
+        });
+
+        // Atualizar Ranking
+        const rankingData = nomes.map(n => ({nome: n, horas: rel[n].horas}))
+                         .sort((a,b) => b.horas - a.horas);
+
+const rankDiv = document.getElementById("rankingContainer");
+
+rankDiv.innerHTML = rankingData.slice(0,5).map((item, i) => `
+    <div class="ranking-item">
+        <div class="rank-pos" style="background:${coresPasteis[i % coresPasteis.length]}">
+            ${medalha(i+1)}
+        </div>
+
+        <div style="flex:1">
+            <div style="font-weight:700; font-size:0.9rem">${item.nome}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted)">
+                ${item.horas} horas registradas
+            </div>
+        </div>
+
+    </div>
+`).join('');
+
+        // 3. Histórico (já considera as datas atuais)
+        carregarHistorico();
+    }
+
+    async function carregarHistorico() {
+        const nome = document.getElementById("filtroNome").value;
+        const dataInicio = document.getElementById("dataInicio").value;
+        const dataFim = document.getElementById("dataFim").value;
+
+        const inicioFormatado = formatarDataParaAPI(dataInicio);
+        const fimFormatado = formatarDataParaAPI(dataFim);
+
+        const url = buildURL('historico', { nome, inicio: inicioFormatado, fim: fimFormatado });
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        const tbody = document.getElementById("tabelaHistorico");
+        tbody.innerHTML = dados.map(d => `
+            <tr>
+                <td style="font-weight:700">${d.nome}</td>
+                <td>${d.atendimento}</td>
+                <td>${d.horas}h</td>
+                <td><span class="badge-valor">R$ ${d.valor}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    // Configuração Inicial das Datas (Mês Atual)
+    function configurarDatasPadrao() {
+        const agora = new Date();
+        const primeiroDia = new Date(agora.getFullYear(), agora.getMonth(), 1);
+        
+        document.getElementById("dataInicio").value = primeiroDia.toISOString().split('T')[0];
+        document.getElementById("dataFim").value = agora.toISOString().split('T')[0];
+    }
+
+    // Inicializar Mapa
+    async function carregarMapa(){
+
+    const url = buildURL('mapa');
+    const resposta = await fetch(url);
+    const pontos = await resposta.json();
+
+    const map = L.map('map', { zoomControl: false }).setView([-22.9, -43.2], 10);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    const cluster = L.markerClusterGroup();
+
+    pontos.forEach(p => {
+
+        if(p.lat){
+
+            const marker = L.marker([p.lat, p.lon])
+            .bindPopup(`
+                <b>${p.nome || "Atendimento"}</b><br>
+                ${p.servico || ""}
+            `);
+
+            cluster.addLayer(marker);
+
+        }
+
+    });
+
+    map.addLayer(cluster);
+
+}
+    configurarDatasPadrao();
+    atualizarDados();
+    carregarMapa();
+
+    document.getElementById("filtroNome").addEventListener("change", carregarHistorico);
+</script>
+</body>
+</html>
