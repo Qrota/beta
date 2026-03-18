@@ -1,0 +1,22 @@
+{
+  "name": "Acalanto Bebê Atendimento",
+  "short_name": "Acalanto",
+  "description": "Registro de Atendimento Acalanto Bebê",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f5dbc9",
+  "theme_color": "#f3a8a8",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "imagens/logo_acalantobebe1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "imagens/logo_acalantobebe1.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
